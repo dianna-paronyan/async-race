@@ -1,0 +1,26 @@
+nav.menu {
+    display: flex;
+    background-color: #6b6b6c;
+    height: 48px;
+    align-items: center;
+}
+
+.menu-item {
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0 20px;
+    line-height: 48px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.menu-item-active {
+    background-color: #1890ff;
+    color: #fff;
+    border-radius: 4px;
+}

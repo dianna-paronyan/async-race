@@ -21,7 +21,7 @@ export default tseslint.config([
     },
     rules: {
       'max-lines-per-function': ['error', { max: 40 }],
-      'no-magic-numbers': ['warn', { ignore: [0, 1], ignoreArrayIndexes: true }]
+      'no-magic-numbers': ['warn', { ignore: [0, 1, -1], ignoreArrayIndexes: true }],
     },
   },
 ]);

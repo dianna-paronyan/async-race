@@ -1,0 +1,55 @@
+.garage {
+  width: 100%;
+  background: #f9fafb;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  &-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 0;
+    background: #ffffff;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .ant-btn {
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 0 14px;
+    }
+
+    .ant-btn-dangerous {
+      background: #ff4d4f;
+      color: #fff;
+      &:hover {
+        background: #ff7875;
+      }
+    }
+  }
+
+  .ant-pagination {
+    margin-top: 16px;
+    align-self: end;
+  }
+
+  &-total {
+    align-self: end;
+    background: #1677ff;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .ant-spin,
+  p {
+    align-self: center;
+  }
+}

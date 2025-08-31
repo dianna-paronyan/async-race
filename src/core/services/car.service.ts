@@ -47,7 +47,39 @@ const CarService = () => {
     }
   };
 
-  return { getCars, createCar, updateCar, deleteCar };
+  const startEngine = async (id: number) => {
+    try {
+      const res = await axios.patch<{ velocity: number; distance: number }>(
+        `${Urls.ENGINE}?id=${id}&status=started`,
+      );
+      return res.data;
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      throw new Error(error.response?.data?.message || 'Error starting engine for car');
+    }
+  };
+
+  const stopEngine = async (id: number) => {
+    try {
+      const res = await axios.patch(`${Urls.ENGINE}?id=${id}&status=stopped`);
+      return res.data;
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      throw new Error(error.response?.data?.message || 'Error stopping engine for car');
+    }
+  };
+
+  const drive = async (id: number) => {
+    try {
+      const res = await axios.patch<{ success: boolean }>(`${Urls.ENGINE}?id=${id}&status=drive`);
+      return res.data;
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      throw new Error(error.response?.data?.message || 'Error driving car');
+    }
+  };
+
+  return { getCars, createCar, updateCar, deleteCar, startEngine, stopEngine, drive };
 };
 
 export default CarService();

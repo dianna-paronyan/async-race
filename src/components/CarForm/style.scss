@@ -1,0 +1,34 @@
+.car-form {
+  margin: 20px 0;
+  gap: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  &-input {
+    width: 220px;
+    border-radius: 8px;
+  }
+
+  &-color {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  &-button {
+    min-width: 120px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}

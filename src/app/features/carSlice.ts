@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { CarModel, CarStateModel, NewCarModel } from '../../core/models/car.model.ts';
 import CarService from '../../core/services/car.service.ts';
 import { generateRandomCars } from '../../helpers/generateRandomCars.ts';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import type { CarModel, CarStateModel, NewCarModel } from '../../core/models/car.model.ts';
 
 const initialState: CarStateModel = {
   cars: [],
@@ -42,15 +43,40 @@ export const addRandomCars = createAsyncThunk('cars/addRandomCars', async (count
 const carsSlice = createSlice({
   name: 'cars',
   initialState,
-  reducers: {},
+  reducers: {
+    setCarRacing: (state, action: PayloadAction<{ id: number; racing: boolean }>) => {
+      const car = state.cars.find((c) => c.id === action.payload.id);
+      if (car) {
+        car.racing = action.payload.racing;
+      }
+    },
+    setCarPosition: (state, action: PayloadAction<{ id: number; position: number }>) => {
+      const car = state.cars.find((c) => c.id === action.payload.id);
+      if (car) {
+        car.position = action.payload.position;
+      }
+    },
+    resetRace: (state) => {
+      state.cars.forEach((car) => {
+        car.position = 0;
+        car.racing = false;
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getCars.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getCars.fulfilled, (state: CarStateModel, action) => {
+      .addCase(getCars.fulfilled, (state, action) => {
         state.loading = false;
-        state.cars = action.payload.data;
+        state.cars = action.payload.data.map((car) => ({
+          ...car,
+          position: 0,
+          racing: false,
+          velocity: 0,
+          distance: 0,
+        }));
         state.total = action.payload.total;
         state.page = action.meta.arg.page;
       })
@@ -59,27 +85,49 @@ const carsSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addCar.fulfilled, (state, action) => {
-        state.cars.push(action.payload);
+        state.cars.push({
+          ...action.payload,
+          position: 0,
+          racing: false,
+          velocity: 0,
+          distance: 0,
+        });
+        state.total += 1;
       })
       .addCase(editCar.fulfilled, (state, action) => {
-        const NOT_FOUND = -1;
-        const carIndex = state.cars.findIndex((car) => car.id === action.payload.id);
-
-        if (carIndex !== NOT_FOUND) {
-          state.cars[carIndex] = action.payload;
+        const idx = state.cars.findIndex((car) => car.id === action.payload.id);
+        if (idx !== -1) {
+          state.cars[idx] = {
+            ...action.payload,
+            position: state.cars[idx].position,
+            racing: state.cars[idx].racing,
+            velocity: state.cars[idx].velocity,
+            distance: state.cars[idx].distance,
+          };
         }
       })
       .addCase(removeCar.fulfilled, (state, action) => {
         state.cars = state.cars.filter((car) => car.id !== action.payload);
         state.total -= 1;
         if (state.cars.length === 0 && state.page > 1) {
-          state.page = state.page - 1;
+          state.page -= 1;
         }
       })
       .addCase(addRandomCars.fulfilled, (state, action) => {
-        state.cars = action.payload;
+        state.cars.push(
+          ...action.payload.map((car) => ({
+            ...car,
+            position: 0,
+            racing: false,
+            velocity: 0,
+            distance: 0,
+          })),
+        );
+        state.total += action.payload.length;
       });
   },
 });
+
+export const { setCarRacing, setCarPosition, resetRace } = carsSlice.actions;
 
 export default carsSlice.reducer;

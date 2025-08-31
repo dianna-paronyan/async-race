@@ -1,0 +1,33 @@
+.garage-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  justify-content: start;
+
+  .ant-btn {
+    min-width: 110px;
+    height: 40px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .ant-btn-primary {
+    background: linear-gradient(135deg, #1677ff, #4096ff);
+    border: none;
+    &:hover {
+      background: linear-gradient(135deg, #4096ff, #69b1ff);
+    }
+  }
+
+  .ant-btn-dashed {
+    border-style: dashed;
+    color: #1677ff;
+  }
+}
+

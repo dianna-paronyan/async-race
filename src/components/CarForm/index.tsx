@@ -1,5 +1,6 @@
 import { Input, Button, ColorPicker, Space } from 'antd';
 import type { NewCarModel } from '../../core/models/car.model.ts';
+import './style.scss';
 
 interface CarFormProps {
   car: NewCarModel;
@@ -10,18 +11,24 @@ interface CarFormProps {
 
 const CarForm = ({ car, handleChange, handleSubmit, isDisabled }: CarFormProps) => {
   return (
-    <Space style={{ marginBottom: 16 }}>
+    <Space className="car-form">
       <Input
         placeholder="Car name"
         value={car.name}
         onChange={(e) => handleChange('name', e.target.value)}
-        style={{ width: 200 }}
+        className="car-form-input"
       />
       <ColorPicker
         value={car.color}
         onChange={(color) => handleChange('color', color.toHexString())}
+        className="car-form-color"
       />
-      <Button type="primary" onClick={handleSubmit} disabled={isDisabled}>
+      <Button
+        type="primary"
+        onClick={handleSubmit}
+        disabled={isDisabled}
+        className="car-form-button"
+      >
         {car.name && !isDisabled ? 'Save Car' : 'Add Car'}
       </Button>
     </Space>

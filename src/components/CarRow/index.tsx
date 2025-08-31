@@ -1,30 +1,39 @@
-import { Button } from 'antd';
-import type { FC } from 'react';
-import type { CarModel } from '../../core/models/car.model.ts';
-import './style.css';
+import { forwardRef, useImperativeHandle } from 'react';
+import type { CarModel } from '../../core/models/car.model';
+import { useCarAnimation } from '../../hooks/useCarAnimation.ts';
+import './style.scss';
+
+export interface CarRowHandle {
+  start: () => Promise<{ id: number; time: number; name: string } | null>;
+  stop: () => void;
+}
 
 interface CarRowProps {
   car: CarModel;
 }
 
-const CarRow: FC<CarRowProps> = ({ car }) => {
+const CarRow = forwardRef<CarRowHandle, CarRowProps>(({ car }, ref) => {
+  const { carRef, trackRef, start, stop } = useCarAnimation(car);
+  useImperativeHandle(ref, () => ({ start, stop }));
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-      <Button>Start</Button>
-      <Button>Stop</Button>
-      <div
-        className="car"
-        style={{
-          maskImage: 'url(/car.svg)',
-          WebkitMaskImage: 'url(/car.svg)',
-          maskRepeat: 'no-repeat',
-          maskSize: 'contain',
-          background: car.color,
-        }}
-      ></div>
-      <span>{car.name}</span>
-    </div>
+    <>
+      <div className="car-row-controls">
+        <button onClick={start} disabled={car.racing}>
+          Start
+        </button>
+        <button onClick={stop} disabled={!car.racing}>
+          Stop
+        </button>
+      </div>
+
+      <div className="car-row-track" ref={trackRef}>
+        <div className="car-row-car" ref={carRef} style={{ backgroundColor: car.color }} />
+        <div className="car-row-finish" />
+        <span className="car-row-name">{car.name}</span>
+      </div>
+    </>
   );
-};
+});
 
 export default CarRow;

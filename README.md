@@ -38,3 +38,22 @@ This project uses an environment variable for the base API URL. Create a `.env` 
 ```
 VITE_API_BASE_URL=api-url
 ```
+
+## Tech Stack & Tools
+
+- **React** – UI library  
+- **Vite** – Fast build tool  
+- **TypeScript** – Static typing  
+- **Redux Toolkit** – State management  
+- **Axios** – API requests  
+- **SCSS** – Styling  
+- **ESLint + Prettier** – Code quality and formatting  
+- **Airbnb ESLint config** – Consistent coding style  
+- **Vercel** – Deployment  
+
+## Deployment
+
+Project is deployed on **Vercel**.  
+```
+https://vercel.com/diannas-projects-5bfd2d42/async-race-u62c
+```

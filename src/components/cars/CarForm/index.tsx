@@ -1,5 +1,5 @@
 import { Input, Button, ColorPicker, Space } from 'antd';
-import type { NewCarModel } from '../../core/models/car.model.ts';
+import type { NewCarModel } from '../../../core/models/car.model.ts';
 import './style.scss';
 
 interface CarFormProps {

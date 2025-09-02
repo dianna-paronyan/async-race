@@ -3,14 +3,27 @@ import type { CarModel, NewCarModel } from '../models/car.model.ts';
 import { Urls } from '../data/urls.ts';
 
 const CarService = () => {
-  const getCars = async (page: number, limit: number) => {
+  const getCars = async (page?: number, limit?: number) => {
     try {
-      const res = await axios.get(`${Urls.CARS}?_page=${page}&_limit=${limit}`);
-
+      let url = Urls.CARS;
+      if (page && limit) {
+        url += `?_page=${page}&_limit=${limit}`;
+      }
+      const res = await axios.get(url);
       return {
         data: res.data,
         total: Number(res.headers['x-total-count']),
       };
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      throw new Error(error.response?.data?.message || 'Error getting cars');
+    }
+  };
+
+  const getCar = async (id: number) => {
+    try {
+      const res = await axios.get(`${Urls.CARS}/${id}`);
+      return res.data;
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
       throw new Error(error.response?.data?.message || 'Error getting car');
@@ -79,7 +92,7 @@ const CarService = () => {
     }
   };
 
-  return { getCars, createCar, updateCar, deleteCar, startEngine, stopEngine, drive };
+  return { getCars, getCar, createCar, updateCar, deleteCar, startEngine, stopEngine, drive };
 };
 
 export default CarService();

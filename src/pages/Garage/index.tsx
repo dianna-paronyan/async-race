@@ -2,20 +2,25 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Pagination, Spin, Button } from 'antd';
 import { useCarForm } from '../../hooks/useCarForm.ts';
-import type { CarRowHandle } from '../../components/CarRow';
-import type { AppDispatch, RootState } from '../../app/store.tsx';
 import { addRandomCars, getCars, removeCar } from '../../app/features/carSlice.ts';
-import CarForm from '../../components/CarForm';
-import GarageControls from '../../components/GarageControls';
-import CarRow from '../../components/CarRow';
+import CarForm from '../../components/cars/CarForm';
+import GarageControls from '../../components/cars/GarageControls';
+import CarRow from '../../components/cars/CarRow';
 import { removeWinner } from '../../app/features/winnerSlice.ts';
+import EmptyPage from '../../components/shared/EmptyPage';
+import type { CarRowHandle } from '../../components/cars/CarRow';
+import type { AppDispatch, RootState } from '../../app/store.tsx';
 import './style.scss';
 
 const Garage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { cars, page, total, loading, error } = useSelector((state: RootState) => state.cars);
+  const { cars, page, total, racing, loading, error } = useSelector(
+    (state: RootState) => state.cars,
+  );
+  const { winners } = useSelector((state: RootState) => state.winners);
   const carRefs = useRef<(CarRowHandle | null)[]>([]);
-  const { car, editCarForm, handleChange, handleSubmit, isDisabled } = useCarForm(page);
+  const { car, editCarForm, handleChange, handleSubmit, isDisabled, errorMessageHolder } =
+    useCarForm(page);
 
   useEffect(() => {
     dispatch(getCars({ page, limit: 7 }));
@@ -23,12 +28,15 @@ const Garage = () => {
 
   const handleDelete = (id: number) => {
     dispatch(removeCar(id));
-    dispatch(removeWinner(id));
+
+    const winnerExists = winners.some((w) => w.id === id);
+    if (winnerExists) {
+      dispatch(removeWinner(id));
+    }
   };
 
   const generateRandomCars = () => {
     dispatch(addRandomCars(5));
-    dispatch(getCars({ page, limit: 7 }));
   };
 
   const handlePageChange = (newPage: number) => dispatch(getCars({ page: newPage, limit: 7 }));
@@ -38,6 +46,7 @@ const Garage = () => {
 
   return (
     <div className="garage">
+      {errorMessageHolder}
       <CarForm
         car={car}
         handleChange={handleChange}
@@ -46,24 +55,37 @@ const Garage = () => {
       />
 
       <GarageControls carRefs={carRefs.current} onAddCars={generateRandomCars} />
+      {!total ? (
+        <EmptyPage message="No cars in the garage yet." />
+      ) : (
+        <>
+          {cars.map((car, idx) => (
+            <div key={car.id} className="garage-row">
+              <Button onClick={() => editCarForm(car)} disabled={racing}>
+                Edit
+              </Button>
+              <Button danger onClick={() => handleDelete(car.id)} disabled={racing}>
+                Delete
+              </Button>
+              <CarRow
+                ref={(el) => {
+                  carRefs.current[idx] = el;
+                }}
+                car={car}
+              />
+            </div>
+          ))}
 
-      {cars.map((car, idx) => (
-        <div key={car.id} className="garage-row">
-          <Button onClick={() => editCarForm(car)}>Edit</Button>
-          <Button danger onClick={() => handleDelete(car.id)}>
-            Delete
-          </Button>
-          <CarRow
-            ref={(el) => {
-              carRefs.current[idx] = el;
-            }}
-            car={car}
+          <Pagination
+            current={page}
+            total={total}
+            pageSize={7}
+            onChange={handlePageChange}
+            disabled={racing}
           />
-        </div>
-      ))}
-
-      <Pagination current={page} total={total} pageSize={7} onChange={handlePageChange} />
-      <div className="garage-total">Total Cars: {total}</div>
+          <div className="garage-total">Total Cars: {total}</div>
+        </>
+      )}
     </div>
   );
 };

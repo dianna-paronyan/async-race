@@ -10,7 +10,16 @@ export const useCarForm = (currentPage = 1, pageSize = 7) => {
   const [car, setCar] = useState<NewCarModel>({ name: '', color: '#000000' });
   const [originalCar, setOriginalCar] = useState<NewCarModel>({ name: '', color: '#000000' });
   const [editingCarId, setEditingCarId] = useState<number | null>(null);
+  const [errorMessage, errorMessageHolder] = message.useMessage();
 
+  const showErrorMessage = (msg: string) => {
+    errorMessage.open({
+      type: 'error',
+      content: msg,
+      duration: 3000,
+    });
+    setTimeout(errorMessage.destroy, 3000);
+  };
   const editCarForm = (car: CarModel) => {
     setCar({ name: car.name, color: car.color });
     setOriginalCar({ name: car.name, color: car.color });
@@ -23,7 +32,11 @@ export const useCarForm = (currentPage = 1, pageSize = 7) => {
 
   const handleSubmit = () => {
     if (!car.name.trim()) {
-      return message.error('Car name is required!');
+      return showErrorMessage('Car name is required!');
+    }
+
+    if (car.name.length > 20) {
+      return showErrorMessage('Car name must be 20 characters or less!');
     }
 
     if (editingCarId !== null) {
@@ -49,5 +62,6 @@ export const useCarForm = (currentPage = 1, pageSize = 7) => {
     handleChange,
     handleSubmit,
     isDisabled,
+    errorMessageHolder,
   };
 };

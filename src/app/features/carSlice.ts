@@ -1,22 +1,27 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import CarService from '../../core/services/car.service.ts';
-import { generateRandomCars } from '../../helpers/generateRandomCars.ts';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import CarService from '../../core/services/car.service.ts';
 import type { CarModel, CarStateModel, NewCarModel } from '../../core/models/car.model.ts';
+import { generateRandomCars } from '../../helpers/generateRandomCars.ts';
 
 const initialState: CarStateModel = {
   cars: [],
-  page: 0,
+  page: 1,
   total: 0,
+  racing: false,
   loading: false,
   error: undefined,
 };
 
 export const getCars = createAsyncThunk<
   { data: CarModel[]; total: number },
-  { page: number; limit: number }
->('cars/getCars', async ({ page, limit }) => {
-  return await CarService.getCars(page, limit);
+  { page?: number; limit?: number } | undefined
+>('cars/getCars', async ({ page, limit } = {}) => {
+  if (!page && !limit) {
+    const res = await CarService.getCars();
+    return { data: res.data, total: res.total };
+  }
+  return await CarService.getCars(page ?? 1, limit ?? 10);
 });
 
 export const addCar = createAsyncThunk(
@@ -24,21 +29,20 @@ export const addCar = createAsyncThunk(
   async (car: NewCarModel) => await CarService.createCar(car),
 );
 
+export const addRandomCars = createAsyncThunk('cars/addRandomCars', async (count: number) => {
+  return await generateRandomCars(count);
+});
+
 export const editCar = createAsyncThunk(
   'cars/editCar',
   async ({ id, car }: { id: number; car: NewCarModel }) => {
     return await CarService.updateCar(id, car);
   },
 );
-
 export const removeCar = createAsyncThunk(
   'cars/removeCar',
   async (id: number) => await CarService.deleteCar(id),
 );
-
-export const addRandomCars = createAsyncThunk('cars/addRandomCars', async (count: number) => {
-  return await generateRandomCars(count);
-});
 
 const carsSlice = createSlice({
   name: 'cars',
@@ -46,21 +50,24 @@ const carsSlice = createSlice({
   reducers: {
     setCarRacing: (state, action: PayloadAction<{ id: number; racing: boolean }>) => {
       const car = state.cars.find((c) => c.id === action.payload.id);
-      if (car) {
-        car.racing = action.payload.racing;
-      }
+      if (car) car.racing = action.payload.racing;
+      state.racing = state.cars.some((c) => c.racing);
     },
     setCarPosition: (state, action: PayloadAction<{ id: number; position: number }>) => {
       const car = state.cars.find((c) => c.id === action.payload.id);
-      if (car) {
-        car.position = action.payload.position;
-      }
+      if (car) car.position = action.payload.position;
+      state.racing = state.cars.some((c) => c.racing);
+    },
+    finishRace: (state) => {
+      state.cars.forEach((car: CarModel) => (car.racing = false));
+      state.racing = false;
     },
     resetRace: (state) => {
       state.cars.forEach((car) => {
         car.position = 0;
         car.racing = false;
       });
+      state.racing = false;
     },
   },
   extraReducers: (builder) => {
@@ -78,7 +85,9 @@ const carsSlice = createSlice({
           distance: 0,
         }));
         state.total = action.payload.total;
-        state.page = action.meta.arg.page;
+        if (action.meta.arg?.page !== undefined) {
+          state.page = action.meta.arg.page;
+        }
       })
       .addCase(getCars.rejected, (state, action) => {
         state.loading = false;
@@ -114,20 +123,18 @@ const carsSlice = createSlice({
         }
       })
       .addCase(addRandomCars.fulfilled, (state, action) => {
-        state.cars.push(
-          ...action.payload.map((car) => ({
-            ...car,
-            position: 0,
-            racing: false,
-            velocity: 0,
-            distance: 0,
-          })),
-        );
+        state.cars = action.payload.map((car) => ({
+          ...car,
+          position: 0,
+          racing: false,
+          velocity: 0,
+          distance: 0,
+        }));
+
         state.total += action.payload.length;
       });
   },
 });
 
-export const { setCarRacing, setCarPosition, resetRace } = carsSlice.actions;
-
+export const { setCarRacing, setCarPosition, finishRace, resetRace } = carsSlice.actions;
 export default carsSlice.reducer;

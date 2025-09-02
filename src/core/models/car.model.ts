@@ -4,8 +4,8 @@ interface Car {
   color: string;
 }
 export interface CarModel extends Car {
-  position: number;
-  racing: boolean;
+  position?: number;
+  racing?: boolean;
   velocity?: number;
   distance?: number;
 }
@@ -16,6 +16,7 @@ export interface CarStateModel {
   cars: CarModel[];
   page: number;
   total: number;
+  racing: boolean;
   loading: boolean;
   error: string | undefined;
 }

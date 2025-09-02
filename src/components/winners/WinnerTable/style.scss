@@ -1,0 +1,11 @@
+.car {
+  width: 60px;
+  height: 40px;
+  position: absolute;
+  left: 0;
+  top: 10px;
+  mask-image: url("../../../assets/car.svg");
+  -webkit-mask-image: url("../../../assets/car.svg");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}

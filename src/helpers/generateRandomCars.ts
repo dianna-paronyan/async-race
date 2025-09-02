@@ -1,4 +1,4 @@
-import type { CarModel } from '../core/models/car.model.ts';
+import type { CarModel, NewCarModel } from '../core/models/car.model.ts';
 import CarService from '../core/services/car.service.ts';
 
 export const generateRandomCars = async (count = 5): Promise<CarModel[]> => {
@@ -33,7 +33,7 @@ export const generateRandomCars = async (count = 5): Promise<CarModel[]> => {
       .toString(16)
       .padStart(6, '0')}`;
 
-  const cars: Omit<CarModel, 'id'>[] = [];
+  const cars: NewCarModel[] = [];
   for (let i = 0; i < count; i++) {
     cars.push({
       name: `${getRandomItem(brands)} ${getRandomItem(models)}`,

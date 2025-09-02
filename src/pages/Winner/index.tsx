@@ -1,5 +1,7 @@
+import WinnerTable from '../../components/winners/WinnerTable';
+
 function Winner() {
-  return <></>;
+  return <WinnerTable />;
 }
 
 export default Winner;

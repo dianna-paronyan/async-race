@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle } from 'react';
-import type { CarModel } from '../../core/models/car.model';
-import { useCarAnimation } from '../../hooks/useCarAnimation.ts';
+import { useCarAnimation } from '../../../hooks/useCarAnimation.ts';
+import type { CarModel } from '../../../core/models/car.model.ts';
 import './style.scss';
 
 export interface CarRowHandle {
@@ -22,7 +22,7 @@ const CarRow = forwardRef<CarRowHandle, CarRowProps>(({ car }, ref) => {
         <button onClick={start} disabled={car.racing}>
           Start
         </button>
-        <button onClick={stop} disabled={!car.racing}>
+        <button onClick={stop} disabled={car.position === 0 && !car.racing}>
           Stop
         </button>
       </div>
@@ -35,5 +35,4 @@ const CarRow = forwardRef<CarRowHandle, CarRowProps>(({ car }, ref) => {
     </>
   );
 });
-
 export default CarRow;

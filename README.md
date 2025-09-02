@@ -55,5 +55,5 @@ VITE_API_BASE_URL=api-url
 
 Project is deployed on **Vercel**.  
 ```
-https://vercel.com/diannas-projects-5bfd2d42/async-race-u62c
+https://async-race-u62c.vercel.app
 ```

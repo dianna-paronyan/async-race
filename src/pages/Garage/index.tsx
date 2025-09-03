@@ -39,7 +39,8 @@ const Garage = () => {
   };
 
   const generateRandomCars = () => {
-    dispatch(addRandomCars(5));
+    dispatch(addRandomCars(100));
+    dispatch(getCars({ page, limit: 7 }));
   };
 
   const handlePageChange = (newPage: number) => dispatch(getCars({ page: newPage, limit: 7 }));

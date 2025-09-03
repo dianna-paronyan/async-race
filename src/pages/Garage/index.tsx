@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Pagination, Spin, Button } from 'antd';
+import { Pagination, Button } from 'antd';
 import { useCarForm } from '../../hooks/useCarForm.ts';
 import { addRandomCars, getCars, removeCar } from '../../app/features/carSlice.ts';
 import CarForm from '../../components/cars/CarForm';
@@ -10,6 +10,9 @@ import { removeWinner } from '../../app/features/winnerSlice.ts';
 import EmptyPage from '../../components/shared/EmptyPage';
 import type { CarRowHandle } from '../../components/cars/CarRow';
 import type { AppDispatch, RootState } from '../../app/store.tsx';
+import Spinner from '../../components/shared/Spinner';
+import Error from '../../components/shared/Error';
+import TotalBadge from '../../components/shared/TotalBadge';
 import './style.scss';
 
 const Garage = () => {
@@ -41,8 +44,8 @@ const Garage = () => {
 
   const handlePageChange = (newPage: number) => dispatch(getCars({ page: newPage, limit: 7 }));
 
-  if (loading) return <Spin />;
-  if (error) return <p>{error}</p>;
+  if (loading) return <Spinner />;
+  if (error) return <Error message={error} />;
 
   return (
     <div className="garage">
@@ -83,7 +86,7 @@ const Garage = () => {
             onChange={handlePageChange}
             disabled={racing}
           />
-          <div className="garage-total">Total Cars: {total}</div>
+          <TotalBadge label="Total cars" value={total} />
         </>
       )}
     </div>

@@ -9,6 +9,8 @@ import type { TablePaginationConfig } from 'antd';
 import type { CarModel } from '../../../core/models/car.model.ts';
 import type { Order } from '../../../core/models/winner.model.ts';
 import type { FilterValue } from 'antd/es/table/interface';
+import Error from '../../shared/Error';
+import TotalBadge from '../../shared/TotalBadge';
 import './style.scss';
 
 interface WinnerTableProps {
@@ -84,19 +86,22 @@ const WinnerTable: FC<WinnerTableProps> = ({ pageSize = 10 }) => {
   };
 
   if (error) {
-    return <p>{error}</p>;
+    return <Error message={error} />;
   }
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={winnersWithCar}
-      pagination={{ current: page, total, pageSize }}
-      onChange={handleTableChange}
-      loading={loading}
-      locale={{ emptyText: 'No winners yet!' }}
-    />
+    <>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={winnersWithCar}
+        pagination={{ current: page, total, pageSize }}
+        onChange={handleTableChange}
+        loading={loading}
+        locale={{ emptyText: 'No winners yet!' }}
+      />
+      <TotalBadge label="Total winners" value={total} />
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { Urls } from '../data/urls.ts';
 import type { NewWinnerModel } from '../models/winner.model.ts';
+import { isArrayValue } from '../../helpers/isArray.ts';
 
 const WinnerService = () => {
   const getWinners = async (page: number, limit: number, sortField?: string, order?: string) => {
@@ -9,7 +10,7 @@ const WinnerService = () => {
         sortField ? `&_sort=${sortField}&_order=${order}` : ''
       }`,
     );
-    return { data: res.data, total: Number(res.headers['x-total-count']) };
+    return { data: isArrayValue(res.data), total: Number(res.headers['x-total-count']) };
   };
 
   const addWinner = async (winner: NewWinnerModel) => {

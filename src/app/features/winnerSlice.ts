@@ -55,6 +55,10 @@ const winnerSlice = createSlice({
         state.loading = false;
         state.winners.push(action.payload);
       })
+      .addCase(addWinner.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(removeWinner.fulfilled, (state, action) => {
         state.loading = false;
         state.winners = state.winners.filter((winner) => winner.id !== action.payload);
@@ -62,6 +66,10 @@ const winnerSlice = createSlice({
         if (state.winners.length === 0 && state.page > 1) {
           state.page -= 1;
         }
+      })
+      .addCase(removeWinner.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

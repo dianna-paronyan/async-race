@@ -103,6 +103,10 @@ const carsSlice = createSlice({
         });
         state.total += 1;
       })
+      .addCase(addCar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(editCar.fulfilled, (state, action) => {
         const idx = state.cars.findIndex((car) => car.id === action.payload.id);
         if (idx !== -1) {
@@ -115,12 +119,20 @@ const carsSlice = createSlice({
           };
         }
       })
+      .addCase(editCar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(removeCar.fulfilled, (state, action) => {
         state.cars = state.cars.filter((car) => car.id !== action.payload);
         state.total -= 1;
         if (state.cars.length === 0 && state.page > 1) {
           state.page -= 1;
         }
+      })
+      .addCase(removeCar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       })
       .addCase(addRandomCars.fulfilled, (state, action) => {
         state.cars = action.payload.map((car) => ({
@@ -132,6 +144,10 @@ const carsSlice = createSlice({
         }));
 
         state.total += action.payload.length;
+      })
+      .addCase(addRandomCars.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

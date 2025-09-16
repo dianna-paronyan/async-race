@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import type { CarModel, NewCarModel } from '../models/car.model.ts';
 import { Urls } from '../data/urls.ts';
+import { isArrayValue } from '../../helpers/isArray.ts';
 
 const CarService = () => {
   const getCars = async (page?: number, limit?: number) => {
@@ -11,7 +12,7 @@ const CarService = () => {
       }
       const res = await axios.get(url);
       return {
-        data: res.data,
+        data: isArrayValue(res.data),
         total: Number(res.headers['x-total-count']),
       };
     } catch (err) {

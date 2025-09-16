@@ -11,6 +11,7 @@ import type { Order } from '../../../core/models/winner.model.ts';
 import type { FilterValue } from 'antd/es/table/interface';
 import Error from '../../shared/Error';
 import TotalBadge from '../../shared/TotalBadge';
+import Spinner from '../../shared/Spinner';
 import './style.scss';
 
 interface WinnerTableProps {
@@ -38,14 +39,17 @@ const WinnerTable: FC<WinnerTableProps> = ({ pageSize = 10 }) => {
   }, [cars]);
 
   const winnersWithCar = useMemo(() => {
-    return winners.map((winner) => {
-      const car = carMap.get(winner.id);
-      return {
-        ...winner,
-        carName: car?.name || '',
-        carColor: car?.color || '#000',
-      };
-    });
+    return (
+      winners &&
+      winners.map((winner) => {
+        const car = carMap.get(winner.id);
+        return {
+          ...winner,
+          carName: car?.name || '',
+          carColor: car?.color || '#000',
+        };
+      })
+    );
   }, [winners, carMap]);
 
   const columns = [
@@ -84,6 +88,8 @@ const WinnerTable: FC<WinnerTableProps> = ({ pageSize = 10 }) => {
 
     dispatch(getWinners({ page: currentPage, limit: pageSize, sortField, order }));
   };
+
+  if (loading) return <Spinner />;
 
   if (error) {
     return <Error message={error} />;

@@ -63,22 +63,23 @@ const Garage = () => {
         <EmptyPage message="No cars in the garage yet." />
       ) : (
         <>
-          {cars.map((car, idx) => (
-            <div key={car.id} className="garage-row">
-              <Button onClick={() => editCarForm(car)} disabled={racing}>
-                Edit
-              </Button>
-              <Button danger onClick={() => handleDelete(car.id)} disabled={racing}>
-                Delete
-              </Button>
-              <CarRow
-                ref={(el) => {
-                  carRefs.current[idx] = el;
-                }}
-                car={car}
-              />
-            </div>
-          ))}
+          {cars &&
+            cars.map((car, idx) => (
+              <div key={car.id} className="garage-row">
+                <Button onClick={() => editCarForm(car)} disabled={racing}>
+                  Edit
+                </Button>
+                <Button danger onClick={() => handleDelete(car.id)} disabled={racing}>
+                  Delete
+                </Button>
+                <CarRow
+                  ref={(el) => {
+                    carRefs.current[idx] = el;
+                  }}
+                  car={car}
+                />
+              </div>
+            ))}
 
           <Pagination
             current={page}
